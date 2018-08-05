@@ -1,6 +1,6 @@
-from actions import dump_messages, dump_wall, dump_fave,\
-    delete_messages, delete_wall,\
-    render_to_html
+from actions import dump_messages, dump_wall, dump_fave, \
+    delete_messages, delete_wall, \
+    render_to_html, delete_fave
 
 
 def escape():
@@ -10,7 +10,7 @@ def escape():
 
 action_list = [
     dump_messages, dump_wall, dump_fave,
-    delete_messages, delete_wall,
+    delete_messages, delete_wall, delete_fave,
     render_to_html,
     escape
 ]

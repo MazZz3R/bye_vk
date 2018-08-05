@@ -1,4 +1,5 @@
 import configparser
+import webbrowser
 from getpass import getpass
 
 import vk_api
@@ -13,6 +14,19 @@ def auth_handler():
     key = input("Enter authentication code: ")
     remember_device = True
     return key, remember_device
+
+
+def captcha_handler(captcha):
+    """ При возникновении капчи вызывается эта функция и ей передается объект
+        капчи. Через метод get_url можно получить ссылку на изображение.
+        Через метод try_again можно попытаться отправить запрос с кодом капчи
+    """
+
+    webbrowser.open(captcha.get_url())
+    key = input("Enter captcha code: ").strip()
+
+    # Пробуем снова отправить запрос с капчей
+    return captcha.try_again(key)
 
 
 def get_session():
@@ -36,6 +50,7 @@ def get_session():
 
     vk_session = vk_api.VkApi(
         login, password,
-        auth_handler=auth_handler
+        auth_handler=auth_handler,
+        captcha_handler=captcha_handler
     )
     return vk_session

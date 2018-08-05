@@ -3,8 +3,8 @@
 import os
 
 from actions.common import print_owner_info
-from core.download import download_all_photos
 from core.auth import get_session
+from core.download import download_all_photos
 
 try:
     import simplejson as json
@@ -56,12 +56,12 @@ def dump_messages():
 
         if peer_type == 'user':
             values.update({'user_id': peer_id})
-        elif peer_type == 'chat':  # FIXME test me
-            values.update({'peer_id': conversation['peer']['local_id']})
+        elif peer_type == 'chat':
+            values.update({'peer_id': peer_id})
         elif peer_type == 'group':  # FIXME test me
-            values.update({'peer_id': conversation['peer']['local_id']})
+            values.update({'peer_id': peer_id})
         elif peer_type == 'email':  # FIXME test me
-            values.update({'peer_id': conversation['peer']['local_id']})
+            values.update({'peer_id': peer_id})  # or conversation['peer']['local_id']})
 
         messages = vk_tools.get_all(
             'messages.getHistory',

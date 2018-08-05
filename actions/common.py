@@ -3,6 +3,8 @@ ARE_YOU_SURE = 'Вы уверены?\n' + YES_NO_PROMPT
 ARE_YOU_DEFINITELY_SURE = 'Вы точно уверены? Действие нельзя отменить\n' \
                           + YES_NO_PROMPT
 
+FAVE_TYPES = ['Photos', 'Posts', 'Videos', 'Users', 'Links', 'MarketItems']
+
 
 def are_you_sure() -> bool:
     sure = input(ARE_YOU_SURE)
