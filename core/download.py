@@ -68,9 +68,9 @@ def download(url_list, root_dir):
 
             file_size_dl += len(buffer)
             f.write(buffer)
-            status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-            status = status + chr(8) * (len(status) + 1)
-            sys.stdout.write(status)
+            # status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
+            # status = status + chr(8) * (len(status) + 1)
+            # sys.stdout.write(status)
 
         f.close()
         logging.info(u" End  dl: {}".format(filename))

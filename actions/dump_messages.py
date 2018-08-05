@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import os
 
+from actions.common import print_owner_info
 from core.download import download_all_photos
 from core.auth import get_session
 
@@ -27,45 +28,51 @@ def dump_messages():
     vk_tools = vk_api.VkTools(vk_session)
 
     owner = vk_session.method('users.get')[0]
-    print('My page: http://vk.com/id{}'.format(owner['id']))
+    print_owner_info(owner)
 
-    path = './dumps/dialogs/{0} {1} [{2}]/'.format(owner['first_name'], owner['last_name'], owner['id'])
+    path = './dumps/{0} {1} [{2}]/conversations/'.format(
+        owner['first_name'], owner['last_name'], owner['id'])
     os.makedirs(path, exist_ok=True)
 
-    print('Get dialogs...')
-    dialogs = vk_tools.get_all(
-        'messages.getDialogs',
+    print('Get conversations...')
+    conversations = vk_tools.get_all(
+        'messages.getConversations',
         max_count=200,
         values={'preview_length': '0'}
     )
 
-    print('Dialogs count:', dialogs['count'])
+    print('Dialogs count:', conversations['count'])
 
-    for item in dialogs['items']:
-        item = item['message']
+    for item in conversations['items']:
+        conversation = item['conversation']
+        peer_id = conversation['peer']['id']
+        peer_type = conversation['peer']['type']
 
-        if 'chat_id' in item:
-            user_id = 2000000000 + item['chat_id']
-        else:
-            user_id = item['user_id']
-
-        print('Get messages %s...' % user_id)
+        print('Get messages %s...' % peer_id)
 
         values = {
-            'user_id': user_id,
             'rev': '1'
         }
+
+        if peer_type == 'user':
+            values.update({'user_id': peer_id})
+        elif peer_type == 'chat':  # FIXME test me
+            values.update({'peer_id': conversation['peer']['local_id']})
+        elif peer_type == 'group':  # FIXME test me
+            values.update({'peer_id': conversation['peer']['local_id']})
+        elif peer_type == 'email':  # FIXME test me
+            values.update({'peer_id': conversation['peer']['local_id']})
 
         messages = vk_tools.get_all(
             'messages.getHistory',
             max_count=200,
             values=values
         )
-        messages['id'] = user_id
+        messages['id'] = peer_id
         messages['owner'] = owner
-        messages['users'] = get_user_avatars(messages, user_id, vk_session)
+        messages['users'] = get_user_avatars(messages, peer_id, vk_session)
 
-        dialog_path = os.path.join(path, str(user_id))
+        dialog_path = os.path.join(path, str(peer_id))
         os.makedirs(dialog_path, exist_ok=True)
 
         with open(os.path.join(dialog_path, 'im.json'), 'w', encoding='utf-8') as f:

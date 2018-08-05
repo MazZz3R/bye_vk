@@ -31,14 +31,14 @@ def delete_messages():
 
     while True:
         print('Получаем диалоги...')
-        dialogs = vk_tools.get_all(
+        conversations = vk_tools.get_all(
             'messages.getConversations',
             max_count=200,
             values={'preview_length': '0'}
         )
-        print('Количество диалогов:', dialogs['count'])
+        print('Количество диалогов:', conversations['count'])
 
-        if dialogs['count'] == 0:
+        if conversations['count'] == 0:
             print("Все диалоги уже удалены!")
             return
 
@@ -48,7 +48,7 @@ def delete_messages():
                 return
             first_time = False
 
-        for item in dialogs['items']:
+        for item in conversations['items']:
             conversation = item['conversation']
 
             peer_id = conversation['peer']['id']

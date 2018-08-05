@@ -190,24 +190,24 @@ class Main(object):
             f.write(end_file)
 
     def run(self):
-        dialogs_dir = './dumps/dialogs/'
-        listdir = os.listdir(dialogs_dir)
-
-        print('\nВыберите архив для отрисовки:')
-        for x, item in enumerate(listdir, 1):
-            print('{}. {}'.format(x, item))
+        dumps_dir = './dumps/'
+        listdir = os.listdir(dumps_dir)
 
         if len(listdir) == 1:
             idx = 1
         else:
+            print('\nВыберите пользователя:')
+            for x, item in enumerate(listdir, 1):
+                print('{}. {}'.format(x, item))
+
             idx = int(input('> '))
 
-        owner_dir = listdir[idx - 1]
-        target_dir = './html/' + owner_dir
+        owner_dir = os.path.join(listdir[idx - 1], 'conversations')
+        target_dir = os.path.join('./html/', owner_dir)
         os.makedirs(target_dir, exist_ok=True)
         copyfile(CSS_FILE_PATH, target_dir + '/styles.css')
 
-        self.path = os.path.join(dialogs_dir, owner_dir)
+        self.path = os.path.join(dumps_dir, owner_dir)
 
         self.photo_urls = None
 
@@ -227,9 +227,11 @@ class Main(object):
                 image_urls = re.findall(IMAGE_PATTERN, json_str)
                 for image_url in image_urls:
                     if image_url in self.photo_urls:
-                        json_str = json_str.replace(image_url, '../../' + self.photo_urls[image_url].replace('\\', '/'))
-                dump = json.loads(json_str)
+                        json_str = json_str.replace(
+                            image_url,
+                            os.path.join('..', '..', '..', self.photo_urls[image_url]).replace('\\', '/'))
 
+            dump = json.loads(json_str)
             self.users = dump['users']
 
             if dump['id'] > 2e9:

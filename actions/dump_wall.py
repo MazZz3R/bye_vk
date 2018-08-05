@@ -39,11 +39,13 @@ def dump_wall():
     my_id = owner['id']
     print_owner_info(owner)
 
-    path = './dumps/wall/{0} {1} [{2}]/'.format(owner['first_name'], owner['last_name'], owner['id'])
+    path = './dumps/{0} {1} [{2}]/wall/'.format(
+        owner['first_name'], owner['last_name'], owner['id'])
     os.makedirs(path, exist_ok=True)
 
     print('Получаем стену...')
     wall = tools.get_all('wall.get', 100, {'owner_id': my_id})
+    # TODO offsets
     print('Всего записей: ', wall['count'])
 
     if wall['count']:
