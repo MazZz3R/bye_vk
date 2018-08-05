@@ -19,13 +19,15 @@ def auth_handler():
 def get_session():
     config = configparser.ConfigParser()
     config.read('credentials.ini')
+    section = config['DEFAULT']
 
-    if 'Login' in config['DEFAULT'] and 'Password' in config['DEFAULT']:
-        login = config['DEFAULT']['Login']
-        password = config['DEFAULT']['Password']
+    if 'Login' in section and 'Password' in section and \
+            section['Login'] and section['Password']:
+        login = section['Login']
+        password = section['Password']
     else:
         login = input('Login: ')
-        password = input('Password: ')  # FIXME getpass
+        password = getpass()
 
     vk_session = vk_api.VkApi(
         login, password,
