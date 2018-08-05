@@ -18,6 +18,7 @@ def auth_handler():
 
 def get_session():
     config = configparser.ConfigParser()
+    config.read('credentials.ini')
 
     if 'Login' in config['DEFAULT'] and 'Password' in config['DEFAULT']:
         login = config['DEFAULT']['Login']

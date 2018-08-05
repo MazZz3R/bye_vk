@@ -28,11 +28,18 @@
 
 #### Скачать код
 
-[Здесь](TODO_link_zip) и разархивировать
+[Здесь](https://github.com/neseleznev/bye_vk/archive/master.zip) и разархивировать
 
-Для продвинутых: $ git clone https://github.com/neseleznev/bye_vk
+Для продвинутых: ```$ git clone https://github.com/neseleznev/bye_vk```
 
-#### TODO steps 4 dummies
+#### Запуск
+
+Вы можете ввести свои данные в credentials.ini или набрать их во время работы программы
+
+Windows: кликнуть по bye_vk.bat
+
+Для продвинутых: ```$ python3 bye_vk.py```
+
 
 ______________________________________________________
 
