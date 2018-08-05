@@ -6,6 +6,7 @@ from pprint import pprint
 
 import vk_api
 
+from actions.common import print_owner_info
 from core.download import download_all_photos
 from core.auth import get_session
 
@@ -36,15 +37,14 @@ def dump_wall():
 
     owner = vk_session.method('users.get')[0]
     my_id = owner['id']
-    print('My page: http://vk.com/id{}'.format(owner['id']))
+    print_owner_info(owner)
 
     path = './dumps/wall/{0} {1} [{2}]/'.format(owner['first_name'], owner['last_name'], owner['id'])
     os.makedirs(path, exist_ok=True)
 
-    print('Get wall...')
+    print('Получаем стену...')
     wall = tools.get_all('wall.get', 100, {'owner_id': my_id})
-
-    print('Posts count:', wall['count'])
+    print('Всего записей: ', wall['count'])
 
     if wall['count']:
         print('First post:')

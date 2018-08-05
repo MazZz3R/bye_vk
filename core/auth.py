@@ -3,22 +3,21 @@ from getpass import getpass
 
 import vk_api
 
+CONFIG_FILE_PATH = 'credentials.ini'
+
 
 def auth_handler():
     """ При двухфакторной аутентификации вызывается эта функция.
     """
 
-    # Код двухфакторной аутентификации
     key = input("Enter authentication code: ")
-    # Если: True - сохранить, False - не сохранять.
     remember_device = True
-
     return key, remember_device
 
 
 def get_session():
     config = configparser.ConfigParser()
-    config.read('credentials.ini')
+    config.read(CONFIG_FILE_PATH)
     section = config['DEFAULT']
 
     if 'Login' in section and 'Password' in section and \
@@ -28,10 +27,15 @@ def get_session():
     else:
         login = input('Login: ')
         password = getpass()
+        config['DEFAULT'] = {
+            'Login': login,
+            'Password': password
+        }
+        with open(CONFIG_FILE_PATH, 'w') as configfile:
+            config.write(configfile)
 
     vk_session = vk_api.VkApi(
         login, password,
-        auth_handler=auth_handler  # функция для обработки двухфакторной аутентификации
+        auth_handler=auth_handler
     )
-    # vk_session = vk_api.VkApi(login, password)
     return vk_session

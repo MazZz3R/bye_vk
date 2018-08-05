@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+from actions.common import are_you_sure, YES_NO_PROMPT, print_owner_info
 from core.auth import get_session
 
 try:
@@ -24,7 +25,7 @@ def delete_messages():
     vk_tools = vk_api.VkTools(vk_session)
 
     owner = vk_session.method('users.get')[0]
-    print('Полное имя: {} {} [id: {}]'.format(owner['first_name'], owner['last_name'], owner['id']))
+    print_owner_info(owner)
 
     first_time = True
 
@@ -42,13 +43,10 @@ def delete_messages():
             return
 
         if first_time:
-            sure = input('Вы уверены?\n(введите "y" или "д" для продолжения)> ')
-            if sure.lower() not in ['y', 'д']:
+            sure = are_you_sure()
+            if not sure:
                 return
-
-            sure = input('Вы точно уверены? Действие нельзя отменить\n(введите "y" или "д" для продолжения)> ')
-            if sure.lower() not in ['y', 'д']:
-                return
+            first_time = False
 
         for item in dialogs['items']:
             conversation = item['conversation']
@@ -72,8 +70,8 @@ def delete_messages():
             vk_session.method('messages.deleteConversation', values=values)
 
         again = input(
-            'За один раз из каждого диалога можно удалить максимум 10000 сообщений.\n'
-            'Попробовать удалить диалоги ещё раз?\n'
-            '(введите "y" или "д" для продолжения)> ')
+            'За один раз из каждого диалога можно удалить максимум 10000 '
+            'сообщений.\n'
+            'Попробовать удалить диалоги ещё раз?\n' + YES_NO_PROMPT)
         if again.lower() not in ['y', 'д']:
             return
