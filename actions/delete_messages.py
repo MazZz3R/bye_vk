@@ -58,12 +58,12 @@ def delete_messages():
 
             if peer_type == 'user':
                 values.update({'user_id': peer_id})
-            elif peer_type == 'chat':  # FIXME test me
-                values.update({'peer_id': conversation['peer']['local_id']})
+            elif peer_type == 'chat':
+                values.update({'peer_id': peer_id})
             elif peer_type == 'group':  # FIXME test me
-                values.update({'peer_id': conversation['peer']['local_id']})
+                values.update({'peer_id': peer_id})
             elif peer_type == 'email':  # FIXME test me
-                values.update({'peer_id': conversation['peer']['local_id']})
+                values.update({'peer_id': peer_id})
 
             print('Удаляем %s...' % values)
 

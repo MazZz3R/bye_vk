@@ -1,12 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import html
 import datetime
+import html
 import os
-
 import re
-import vk_api
+import webbrowser
 from shutil import copyfile
+from typing import List
+
+import vk_api
 
 from core.download import get_photo_attach, get_video_attach, IMAGE_PATTERN
 
@@ -159,13 +161,78 @@ class Message(object):
         return self.template.format(**values)
 
 
+def get_conversations_raw_html(conversations: List) -> str:
+    conversation_divs = ''
+
+    for conversation in conversations:
+        conversation_divs += f'''
+        <div class="conversation">
+            <div class="avatar_conversations">
+                <img src="{conversation['cover']}">
+            </div>
+            <div class="date right">{datetime.datetime.fromtimestamp(
+                conversation['date']).strftime('%H:%M %d-%B-%Y ')}</div>
+            <div class="username"><a href="{conversation['html_filename']}">{conversation['name']}</a></div>
+
+            <div class="left">
+                <div class="body">{conversation['body']}</div>
+        
+                <div class="attachments">
+                    
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        '''
+
+    return f"""
+<!DOCTYPE html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link rel="stylesheet" type="text/css" href="styles.css" />
+</head>
+
+<body>
+<div class="message_list">
+    {conversation_divs}
+</div>
+</body>
+</html>
+"""
+
+
+def render_conversations_page(conversations_data, target_dir) -> str:
+    conversations = []
+    for user, last_message, html_filename in sorted(
+            conversations_data,
+            key=lambda c: -c[1]['date'] if c[1] else 0):
+        if 'type' in user and user['type'] == 'chat' and 'title' in user:
+            name = user['title']
+        elif 'first_name' in user:
+            name = user['first_name'] + ' ' + user['last_name']
+        else:
+            name = 'Error'
+
+        conversations.append({
+            'cover': extract_cover_photo(user),
+            'name': name,
+            'date': last_message['date'],
+            'body': last_message['body'],
+            'html_filename': html_filename
+        })
+    conversations_html = os.path.join(target_dir, 'conversations.html')
+    with open(conversations_html, 'w', encoding='utf-8') as f:
+        f.write(get_conversations_raw_html(conversations))
+    return conversations_html
+
+
 class Main(object):
     def __init__(self):
         self.vk = vk_api.VkApi()
 
         self.users = {}
 
-    def render(self, target_dir, dump):
+    def render(self, target_dir, dump) -> str:
         if dump['items']:
             last_timestamp = max(map(lambda item: item['date'], dump['items']))
             last_datetime = str(datetime.datetime.fromtimestamp(last_timestamp)).replace(':', '-')
@@ -174,12 +241,17 @@ class Main(object):
 
         if str(dump['id']) in self.users:
             user = self.users[str(dump['id'])]
-            filename = '{0}/{1} {2} {3} [{4}].html'.format(
-                target_dir, last_datetime, user['first_name'], user['last_name'], user['id'])
+            if 'type' in user and user['type'] == 'chat':
+                filename = '{0} {1} [c{2}].html'.format(
+                    last_datetime, user['title'], user['id'])
+            else:
+                filename = '{0} {1} {2} [{3}].html'.format(
+                    last_datetime, user['first_name'],
+                    user['last_name'], user['id'])
         else:
-            filename = '{0}/{1} {2}.html'.format(target_dir, last_datetime, dump['id'])
+            filename = '{0} {1}.html'.format(last_datetime, dump['id'])
 
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(os.path.join(target_dir, filename), 'w', encoding='utf-8') as f:
             f.write(start_file)
             f.write(info_template.format(sel=dump['sel']))
 
@@ -188,6 +260,7 @@ class Main(object):
                 f.write(str(message))  # .encode('utf-8', errors='replace').decode("utf-8"))
 
             f.write(end_file)
+        return filename
 
     def run(self):
         dumps_dir = './dumps/'
@@ -208,10 +281,11 @@ class Main(object):
         copyfile(CSS_FILE_PATH, target_dir + '/styles.css')
 
         self.path = os.path.join(dumps_dir, owner_dir)
-
         self.photo_urls = None
 
         print('Selected {}'.format(self.path))
+
+        conversations_data = []
 
         for dir_name in os.listdir(self.path):
             print('Render %s' % dir_name)
@@ -241,10 +315,24 @@ class Main(object):
 
             dump.update({'sel': sel})
 
-            self.render(target_dir, dump)
+            html_filename = self.render(target_dir, dump)
 
-        print("\nВаши диалоги готовы. Перейдите в папку " + target_dir + " или вбейте в браузер")
-        print("file://" + os.path.abspath(target_dir))
+            conversations_data.append((
+                dump['users'][str(dump['id'])],
+                dump['items'][-1] if len(dump['items']) > 0 else None,
+                html_filename,
+            ))
+
+        conversations_html = render_conversations_page(conversations_data, target_dir)
+        webbrowser.open(conversations_html)
+        print("\nВаши диалоги готовы. См папку " + target_dir)
+
+
+def extract_cover_photo(user_or_chat):
+    for key in ['photo_200', 'photo_100', 'photo_50']:
+        if key in user_or_chat:
+            return user_or_chat[key]
+    return 'http://vk.com/images/deactivated_c.gif'
 
 
 def render_to_html():

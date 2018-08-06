@@ -83,7 +83,8 @@ def dump_messages():
 
 def get_user_avatars(messages, user_id, vk_session):
     user_ids = set()
-    user_ids.add(user_id)
+    if user_id < 2e9:  # not a chat
+        user_ids.add(user_id)
     for item_ in messages['items']:
         if not item_['from_id'] in user_ids:
             user_ids.add(item_['from_id'])
@@ -99,4 +100,10 @@ def get_user_avatars(messages, user_id, vk_session):
     users = dict()
     for id_avatar in response:
         users.update({str(id_avatar['id']): id_avatar})
+
+    if user_id >= 2e9:  # a chat
+        response = vk_session.method('messages.getChat', values={
+            'chat_id': int(user_id - 2e9)
+        })
+        users.update({user_id: response})
     return users
