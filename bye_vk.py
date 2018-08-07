@@ -1,6 +1,7 @@
-from actions import dump_messages, dump_wall, dump_fave, \
-    delete_messages, delete_wall, \
-    render_to_html, delete_fave, dump_albums
+from actions import\
+    dump_messages, dump_wall, dump_fave, dump_albums, dump_videos,\
+    delete_messages, delete_wall, delete_fave, delete_albums, delete_videos,\
+    render_to_html
 
 
 def escape():
@@ -9,8 +10,8 @@ def escape():
 
 
 action_list = [
-    dump_messages, dump_wall, dump_fave, dump_albums,
-    delete_messages, delete_wall, delete_fave,
+    dump_messages, dump_wall, dump_fave, dump_albums, dump_videos,
+    delete_messages, delete_wall, delete_fave, delete_albums, delete_videos,
     render_to_html,
     escape
 ]
@@ -20,7 +21,7 @@ def main():
     while True:
         print('\nВыберите действие:')
         for idx, action in enumerate(action_list):
-            print('{0}. {1}'.format(idx + 1, action.__doc__))
+            print('{0:2}. {1}'.format(idx + 1, action.__doc__))
         action_idx = int(input('> '))
         action_list[action_idx - 1]()
 

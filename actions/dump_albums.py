@@ -3,6 +3,7 @@
 import json
 import os
 
+import time
 import vk_api
 
 from actions.common import print_owner_info
@@ -33,11 +34,18 @@ def dump_albums():
     with open(os.path.join(path, 'albums.json'), 'w', encoding='utf-8') as f:
         json.dump(albums, f, separators=(',', ':'), ensure_ascii=False)
 
+    albums['items'] += [
+        {'title': 'Сохранённые фотографии', 'id': 'saved'},
+        {'title': 'Фотографии со стены', 'id': 'wall'},
+        {'title': 'Фотографии профиля', 'id': 'profile'}
+    ]
+
     for album in albums['items']:
         print('Retrieving ' + album["title"])
         album_photos = tools.get_all('photos.get', 1000, values={
             'album_id': album['id']
         })
+        time.sleep(1)
 
         album_path = os.path.join(path, f'{album["title"]} [{album["id"]}]'.strip())
         os.makedirs(album_path, exist_ok=True)
@@ -55,6 +63,7 @@ def dump_albums():
                 'need_likes': 1,
                 'extended': 1
             })
+            time.sleep(1)
             album_comments[photo['id']] = comments
 
         with open(os.path.join(album_path, 'comments.json'), 'w', encoding='utf-8') as f:
