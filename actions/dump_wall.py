@@ -6,9 +6,9 @@ from pprint import pprint
 
 import vk_api
 
-from actions.common import print_owner_info
-from core.download import download_all_photos
+from actions.common import print_owner_info, ger_user_folder
 from core.auth import get_session
+from core.download import download_all_photos
 
 
 def dump_wall():
@@ -39,8 +39,7 @@ def dump_wall():
     my_id = owner['id']
     print_owner_info(owner)
 
-    path = './dumps/{0} {1} [{2}]/wall/'.format(
-        owner['first_name'], owner['last_name'], owner['id'])
+    path = './dumps/' + ger_user_folder(owner) + '/wall/'
     os.makedirs(path, exist_ok=True)
 
     print('Получаем стену...')

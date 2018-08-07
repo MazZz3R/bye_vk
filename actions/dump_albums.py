@@ -1,12 +1,12 @@
-#!/usr/bin/python3
-#  -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import json
 import os
-
 import time
+
 import vk_api
 
-from actions.common import print_owner_info
+from actions.common import print_owner_info, ger_user_folder
 from core.auth import get_session
 from core.download import download_all_photos
 
@@ -26,8 +26,7 @@ def dump_albums():
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
 
-    path = './dumps/{0} {1} [{2}]/albums/'.format(
-        owner['first_name'], owner['last_name'], owner['id'])
+    path = './dumps/' + ger_user_folder(owner) + '/albums/'
     os.makedirs(path, exist_ok=True)
 
     albums = tools.get_all('photos.getAlbums', 1000)

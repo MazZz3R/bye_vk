@@ -1,11 +1,11 @@
-#!/usr/bin/python3
-#  -*- coding: utf-8 -*-
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import json
 import os
 
 import vk_api
 
-from actions.common import print_owner_info, FAVE_TYPES
+from actions.common import print_owner_info, FAVE_TYPES, ger_user_folder
 from core.auth import get_session
 from core.download import download_all_photos
 
@@ -25,8 +25,7 @@ def dump_fave():
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
 
-    path = './dumps/{0} {1} [{2}]/fave/'.format(
-        owner['first_name'], owner['last_name'], owner['id'])
+    path = './dumps/' + ger_user_folder(owner) + '/fave/'
     os.makedirs(path, exist_ok=True)
 
     for fave_type in FAVE_TYPES:

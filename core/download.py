@@ -2,12 +2,13 @@
 Thanks to https://github.com/Rast1234/vkd/blob/master/Download.py
 """
 import json
-import os
-from os.path import join, exists, isfile, splitext
-import sys
 import logging
-from os import makedirs
+import os
+import random
 import re
+import sys
+from os import makedirs
+from os.path import join, exists, isfile
 
 try:
     import urllib2
@@ -35,8 +36,9 @@ def download(url_list, root_dir):
     url_to_filename = dict()
 
     for url, name, subdir in url_list:
-        if name is None:
-            name = url.split('/')[-1]
+        # if name is None:
+        #     name = url.split('/')[-1]
+        name = escape(url if not name else name)
         filename = join(root_dir, subdir, name)
         makedirs(join(root_dir, subdir), exist_ok=True)
         try:
@@ -44,37 +46,45 @@ def download(url_list, root_dir):
         except OSError:
             continue
 
-        # file might exist, so add (1) or (2) etc
-        counter = 1
         if exists(filename) and isfile(filename):
-            name, ext = splitext(filename)
-            filename = name + " ({})".format(counter) + ext
-        while exists(filename) and isfile(filename):
-            counter += 1
-            name, ext = splitext(filename)
-            filename = name[:-4] + " ({})".format(counter) + ext
+            # print('pass ' + filename)
+            continue
+        # Uncomment to force downloading
+        # counter = 1
+        # # file might exist, so add (1) or (2) etc
+        # if exists(filename) and isfile(filename):
+            # name, ext = splitext(filename)
+            # filename = name + " ({})".format(counter) + ext
+        # while exists(filename) and isfile(filename):
+        #     counter += 1
+        #     name, ext = splitext(filename)
+        #     filename = name[:-4] + " ({})".format(counter) + ext
         logging.info(u"Start dl: {}".format(filename))
-        f = open(filename, 'wb')
-        meta = u.info()
-        file_size = int(meta.get_all("Content-Length")[0])
-        sys.stdout.write("Downloading: %s (%s kb)\n" % (filename.encode('ascii', 'ignore'), file_size / 1024))
+        try:
+            f = open(filename, 'wb')
+            meta = u.info()
+            file_size = int(meta.get_all("Content-Length")[0])
+            sys.stdout.write("Downloading: %s (%s kb)\n" % (filename.encode('ascii', 'ignore'), file_size / 1024))
 
-        file_size_dl = 0
-        block_sz = 8192
-        while True:
-            buffer = u.read(block_sz)
-            if not buffer:
-                break
+            file_size_dl = 0
+            block_sz = 8192
+            while True:
+                buffer = u.read(block_sz)
+                if not buffer:
+                    break
 
-            file_size_dl += len(buffer)
-            f.write(buffer)
-            # status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
-            # status = status + chr(8) * (len(status) + 1)
-            # sys.stdout.write(status)
+                file_size_dl += len(buffer)
+                f.write(buffer)
+                # status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
+                # status = status + chr(8) * (len(status) + 1)
+                # sys.stdout.write(status)
 
-        f.close()
-        logging.info(u" End  dl: {}".format(filename))
-        url_to_filename[url] = filename
+            f.close()
+            logging.info(u" End  dl: {}".format(filename))
+            url_to_filename[url] = filename
+        except BaseException as ex:
+            logging.error("Error " + filename)
+            logging.error(str(ex))
 
     return url_to_filename
 
@@ -105,9 +115,15 @@ def get_video_attach(video):
             'duration': duration}
 
 
-def escape(name):
+KEEP_CHARS = (' ', '.', '_')
+
+
+def escape(name, with_hash=False):
     """Escape the filename"""
-    result = str(re.sub('[^+=\-()$!#%&,.\w\s]', '_', name, flags=re.UNICODE).strip())
+    # result = str(re.sub('[^+=\-()$!#%&,.\w\s]', '_', name, flags=re.UNICODE).strip())
+    result = "".join(c for c in name if c.isalnum() or c in KEEP_CHARS).rstrip()
+    if with_hash:
+        result += '%08x' % random.randrange(16 ** 8)
     # print("\t{}\n\t{}".format(name, result))
     return result[:250]
 
@@ -115,7 +131,7 @@ def escape(name):
 def download_all_photos(path, wall):
     # 1. save all images
     photo_urls = list(map(
-        lambda url: (url, url.split('/')[-1], '',),
+        lambda url: (url, None, '',),
         re.findall(IMAGE_PATTERN, json.dumps(wall))
     ))
     # 2. save only vk photos

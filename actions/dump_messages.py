@@ -1,8 +1,8 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
 
-from actions.common import print_owner_info
+from actions.common import print_owner_info, ger_user_folder
 from core.auth import get_session
 from core.download import download_all_photos
 
@@ -30,8 +30,7 @@ def dump_messages():
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
 
-    path = './dumps/{0} {1} [{2}]/conversations/'.format(
-        owner['first_name'], owner['last_name'], owner['id'])
+    path = './dumps/' + ger_user_folder(owner) + '/conversations/'
     os.makedirs(path, exist_ok=True)
 
     print('Get conversations...')
@@ -93,7 +92,7 @@ def get_user_avatars(messages, user_id, vk_session):
             if not f['user_id'] in user_ids:
                 user_ids.add(f['user_id'])
     values = {
-        'user_ids': ','.join(str(i) for i in user_ids),
+        'user_ids': ','.join(str(i) for i in user_ids if user_id > 0),
         'fields': 'photo_50'
     }
     response = vk_session.method('users.get', values=values)

@@ -1,3 +1,7 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+from core.download import escape
+
 YES_NO_PROMPT = '(введите "y" или "д" для продолжения)> '
 ARE_YOU_SURE = 'Вы уверены?\n' + YES_NO_PROMPT
 ARE_YOU_DEFINITELY_SURE = 'Вы точно уверены? Действие нельзя отменить\n' \
@@ -20,3 +24,7 @@ def are_you_sure() -> bool:
 def print_owner_info(owner):
     print('Полное имя: {} {} [id: {}]'.format(
         owner['first_name'], owner['last_name'], owner['id']))
+
+
+def ger_user_folder(owner) -> str:
+    return escape(f'{owner["first_name"]} {owner["last_name"]} [{owner["id"]}]')
