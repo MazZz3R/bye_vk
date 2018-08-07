@@ -1,11 +1,15 @@
 import configparser
 import webbrowser
 from getpass import getpass
+from os.path import exists, isfile
 
 import vk_api
 
 CONFIG_FILE_PATH = 'credentials.ini'
-
+CONFIG_FILE_DEFAULT_CONTENT = '''[DEFAULT]
+login = 
+password = 
+'''
 
 def auth_handler():
     """ При двухфакторной аутентификации вызывается эта функция.
@@ -31,6 +35,9 @@ def captcha_handler(captcha):
 
 def get_session():
     config = configparser.ConfigParser()
+    if not exists(CONFIG_FILE_PATH) or not isfile(CONFIG_FILE_PATH):
+        with open(CONFIG_FILE_PATH, 'w') as f:
+            f.write(CONFIG_FILE_DEFAULT_CONTENT)
     config.read(CONFIG_FILE_PATH)
     section = config['DEFAULT']
 
