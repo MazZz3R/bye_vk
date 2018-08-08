@@ -3,7 +3,7 @@ import webbrowser
 from getpass import getpass
 from os.path import exists, isfile
 
-import vk_api
+from core.vk_wrapper import VkApiWithRetry
 
 CONFIG_FILE_PATH = 'credentials.ini'
 CONFIG_FILE_DEFAULT_CONTENT = '''[DEFAULT]
@@ -55,7 +55,7 @@ def get_session():
         with open(CONFIG_FILE_PATH, 'w') as configfile:
             config.write(configfile)
 
-    vk_session = vk_api.VkApi(
+    vk_session = VkApiWithRetry(
         login, password,
         auth_handler=auth_handler,
         captcha_handler=captcha_handler

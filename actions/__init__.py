@@ -1,14 +1,5 @@
-from .delete_albums import delete_albums
-from .delete_fave import delete_fave
-from .delete_messages import delete_messages
-from .delete_profile import delete_profile
-from .delete_videos import delete_videos
-from .delete_wall import delete_wall
-from .dump_albums import dump_albums
-from .dump_fave import dump_fave
-from .dump_messages import dump_messages
-from .dump_videos import dump_videos
-from .dump_wall import dump_wall
+from actions.delete import *
+from actions.dump import *
 from .quit_program import quit_program
 from .render_to_html import render_to_html
 

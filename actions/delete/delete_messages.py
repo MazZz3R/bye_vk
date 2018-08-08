@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from actions.common import are_you_sure, YES_NO_PROMPT, print_owner_info
 from core.auth import get_session
+from core.vk_wrapper import VkToolsWithRetry
 
 try:
     import simplejson as json
@@ -22,7 +23,7 @@ def delete_messages():
         print(error_msg)
         return
 
-    vk_tools = vk_api.VkTools(vk_session)
+    vk_tools = VkToolsWithRetry(vk_session)
 
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)

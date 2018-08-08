@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import os
+import time
 
 from actions.common import print_owner_info, ger_user_folder
 from core.auth import get_session
 from core.download import download_all_photos
+from core.vk_wrapper import VkToolsWithRetry
 
 try:
     import simplejson as json
@@ -25,7 +27,7 @@ def dump_messages():
         print(error_msg)
         return
 
-    vk_tools = vk_api.VkTools(vk_session)
+    vk_tools = VkToolsWithRetry(vk_session)
 
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
@@ -67,6 +69,7 @@ def dump_messages():
             max_count=200,
             values=values
         )
+        time.sleep(1)
         messages['id'] = peer_id
         messages['owner'] = owner
         messages['users'] = get_user_avatars(messages, peer_id, vk_session)
@@ -77,7 +80,7 @@ def dump_messages():
         with open(os.path.join(dialog_path, 'im.json'), 'w', encoding='utf-8') as f:
             json.dump(messages, f, separators=(',', ':'), ensure_ascii=False)
 
-        download_all_photos(dialog_path, messages)
+        download_all_photos(dialog_path, messages, 'диалога')
 
 
 def get_user_avatars(messages, user_id, vk_session):
@@ -96,6 +99,7 @@ def get_user_avatars(messages, user_id, vk_session):
         'fields': 'photo_50'
     }
     response = vk_session.method('users.get', values=values)
+    time.sleep(1)
     users = dict()
     for id_avatar in response:
         users.update({str(id_avatar['id']): id_avatar})
@@ -104,5 +108,6 @@ def get_user_avatars(messages, user_id, vk_session):
         response = vk_session.method('messages.getChat', values={
             'chat_id': int(user_id - 2e9)
         })
+        time.sleep(1)
         users.update({user_id: response})
     return users

@@ -31,23 +31,35 @@ IMAGE_PATTERN = re.compile(
     re.IGNORECASE)
 #   |- proto -|--------- domain -----------|--- path ---|-------------- extension -------------|--- params ?ava=1 ---|
 
+CONSOLE_LENGTH = 79
+PROGRESS_SCALE = 'Скачивание фотографий из '
+PROGRESS_STRING = '0 % ............. 25 % ............. 50 % .............. 75 % ........... 100 %'
 
-def download(url_list, root_dir):
+
+def download(url_list, root_dir, photo_source_genitive):
     url_to_filename = dict()
+    urls_count = len(url_list)
+    processed_count = 0
+    printed_char_idx = -1
+    sys.stdout.write(PROGRESS_SCALE + photo_source_genitive + '\n')
 
     for url, name, subdir in url_list:
+        target_char_idx = (CONSOLE_LENGTH * processed_count) // urls_count
+        while printed_char_idx < target_char_idx:
+            printed_char_idx += 1
+            sys.stdout.write(PROGRESS_STRING[printed_char_idx])
+            sys.stdout.flush()
+
         # if name is None:
         #     name = url.split('/')[-1]
         name = escape(url if not name else name)
         filename = join(root_dir, subdir, name)
         makedirs(join(root_dir, subdir), exist_ok=True)
-        try:
-            u = urlopen(url)
-        except OSError:
-            continue
 
         if exists(filename) and isfile(filename):
             # print('pass ' + filename)
+            url_to_filename[url] = filename
+            processed_count += 1
             continue
         # Uncomment to force downloading
         # counter = 1
@@ -59,12 +71,17 @@ def download(url_list, root_dir):
         #     counter += 1
         #     name, ext = splitext(filename)
         #     filename = name[:-4] + " ({})".format(counter) + ext
+        try:
+            u = urlopen(url)
+        except OSError:
+            continue
+
         logging.info(u"Start dl: {}".format(filename))
         try:
             f = open(filename, 'wb')
             meta = u.info()
             file_size = int(meta.get_all("Content-Length")[0])
-            sys.stdout.write("Downloading: %s (%s kb)\n" % (filename.encode('ascii', 'ignore'), file_size / 1024))
+            logging.debug("Downloading: %s (%s kb)\n" % (filename.encode('ascii', 'ignore'), file_size / 1024))
 
             file_size_dl = 0
             block_sz = 8192
@@ -82,10 +99,16 @@ def download(url_list, root_dir):
             f.close()
             logging.info(u" End  dl: {}".format(filename))
             url_to_filename[url] = filename
+            processed_count += 1
         except BaseException as ex:
             logging.error("Error " + filename)
             logging.error(str(ex))
 
+    while printed_char_idx < CONSOLE_LENGTH - 1:
+        printed_char_idx += 1
+        sys.stdout.write(PROGRESS_STRING[printed_char_idx])
+    sys.stdout.write('\n')
+    sys.stdout.flush()
     return url_to_filename
 
 
@@ -128,7 +151,7 @@ def escape(name, with_hash=False):
     return result[:250]
 
 
-def download_all_photos(path, wall):
+def download_all_photos(path, wall, photo_source_genitive):
     # 1. save all images
     photo_urls = list(map(
         lambda url: (url, None, '',),
@@ -142,7 +165,7 @@ def download_all_photos(path, wall):
     #         if attach["type"] == "photo":
     #             url_to_download = get_photo_attach(attach["photo"])['fullsize']
     #             photo_urls.append((url_to_download, url_to_download.split('/')[-1], ''))
-    url_to_filename = download(photo_urls, os.path.join(path, 'photos'))
+    url_to_filename = download(photo_urls, os.path.join(path, 'photos'), photo_source_genitive)
     url_path = os.path.join(path, 'photo_urls.json')
     with open(url_path, 'w', encoding='utf-8') as f:
         json.dump(url_to_filename, f, separators=(',', ':'), ensure_ascii=False)

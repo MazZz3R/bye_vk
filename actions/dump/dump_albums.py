@@ -52,7 +52,7 @@ def dump_albums():
         with open(os.path.join(album_path, 'album.json'), 'w', encoding='utf-8') as f:
             json.dump(album_photos, f, separators=(',', ':'), ensure_ascii=False)
 
-        download_all_photos(album_path, album_photos)
+        download_all_photos(album_path, album_photos, 'альбома')
 
         print('Retrieving comments for' + album["title"])
         album_comments = {}

@@ -2,13 +2,13 @@
 #  -*- coding: utf-8 -*-
 import json
 import os
-from pprint import pprint
 
 import vk_api
 
 from actions.common import print_owner_info, ger_user_folder
 from core.auth import get_session
 from core.download import download_all_photos
+from core.vk_wrapper import VkToolsWithRetry
 
 
 def dump_wall():
@@ -21,7 +21,7 @@ def dump_wall():
         print(error_msg)
         return
 
-    tools = vk_api.VkTools(vk_session)
+    tools = VkToolsWithRetry(vk_session)
 
     """ VkTools.get_all позволяет получить все объекты со всех страниц.
         Соответственно get_all используется только если метод принимает
@@ -47,16 +47,16 @@ def dump_wall():
     # TODO offsets
     print('Всего записей: ', wall['count'])
 
-    if wall['count']:
-        print('First post:')
-        pprint(wall['items'][0])
-
-    if wall['count'] > 1:
-        print('\nLast post:')
-        pprint(wall['items'][-1])
+    # if wall['count']:
+    #     print('First post:')
+    #     pprint(wall['items'][0])
+    #
+    # if wall['count'] > 1:
+    #     print('\nLast post:')
+    #     pprint(wall['items'][-1])
 
     wall_path = os.path.join(path, 'wall.json')
     with open(wall_path, 'w', encoding='utf-8') as f:
         json.dump(wall, f, separators=(',', ':'), ensure_ascii=False)
 
-    download_all_photos(path, wall)
+    download_all_photos(path, wall, 'записей на стене')

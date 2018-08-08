@@ -33,7 +33,7 @@ def dump_videos():
     with open(os.path.join(path, 'videos.json'), 'w', encoding='utf-8') as f:
         json.dump(videos, f, separators=(',', ':'), ensure_ascii=False)
 
-    download_all_photos(path, videos)
+    download_all_photos(path, videos, 'видеозаписей')
 
     video_comments = {}
     for video in videos['items']:
