@@ -8,7 +8,7 @@ import vk_api
 
 from actions.common import print_owner_info, ger_user_folder
 from core.auth import get_session
-from core.download import download_all_photos
+from core.download import download_all_photos, escape
 
 
 def dump_albums():
@@ -40,13 +40,13 @@ def dump_albums():
     ]
 
     for album in albums['items']:
-        print('Retrieving ' + album["title"])
+        print('Скачиваем альбом ' + album["title"])
         album_photos = tools.get_all('photos.get', 1000, values={
             'album_id': album['id']
         })
         time.sleep(1)
 
-        album_path = os.path.join(path, f'{album["title"]} [{album["id"]}]'.strip())
+        album_path = os.path.join(path, f'{escape(album["title"])} [{album["id"]}]'.strip())
         os.makedirs(album_path, exist_ok=True)
 
         with open(os.path.join(album_path, 'album.json'), 'w', encoding='utf-8') as f:
@@ -54,7 +54,7 @@ def dump_albums():
 
         download_all_photos(album_path, album_photos, 'альбома')
 
-        print('Retrieving comments for' + album["title"])
+        print('Получаем комменты для ' + escape(album["title"]))
         album_comments = {}
         for photo in album_photos['items']:
             comments = tools.get_all('photos.getComments', 100, values={
