@@ -16,7 +16,7 @@ except ImportError:
 import vk_api
 
 
-def dump_messages():
+def dump_messages(only_first=False):
     """Выгрузить сообщения (до нескольких часов)"""
 
     vk_session = get_session()
@@ -42,14 +42,20 @@ def dump_messages():
         values={'preview_length': '0'}
     )
 
-    print('Dialogs count:', conversations['count'])
+    with open(os.path.join(path, 'conversations.json'), 'w', encoding='utf-8') as f:
+        json.dump(conversations, f, separators=(',', ':'), ensure_ascii=False)
+
+    print('Количество диалогов:', conversations['count'])
+
+    if only_first:
+        conversations['items'] = conversations['items'][:1]
 
     for item in conversations['items']:
         conversation = item['conversation']
         peer_id = conversation['peer']['id']
         peer_type = conversation['peer']['type']
 
-        print('Get messages %s...' % peer_id)
+        print('Получаем сообщения %s...' % peer_id)
 
         values = {
             'rev': '1'

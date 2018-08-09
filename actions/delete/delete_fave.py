@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-import sys
+import random
 import time
 
 from actions.common import are_you_sure, print_owner_info, FAVE_TYPES
@@ -12,6 +12,9 @@ except ImportError:
     import json
 
 import vk_api
+
+TIMEOUT_FOR_UNLIKE = 3
+TIMEOUT_DELTA = 10
 
 
 def delete_fave():
@@ -30,19 +33,25 @@ def delete_fave():
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
 
-    for fave_type in FAVE_TYPES :
+    for fave_type in FAVE_TYPES:
         print('Получаем закладки %s...' % fave_type)
         fave = vk_tools.get_all('fave.get' + fave_type, 100)
-        # TODO offsets
         print('Всего %d %s' % (fave['count'], fave_type))
 
         if fave['count'] == 0:
-            print("Нет " + fave_type)
+            print("У Вас нет " + fave_type)
             continue
 
         sure = are_you_sure()
         if not sure:
             continue
+
+        mode = input(
+            'При удалении лайков часто выскакивает капча. Выберите режим:\n'
+            '[+] агрессивный (1 лайк в ' + str(TIMEOUT_FOR_UNLIKE) +
+            ' секунд)?\n'
+            '[-] аккуратный (реже, но капчи всё равно бывают)')
+        aggressive = mode == '+'
 
         if fave_type in ['Photos', 'Posts', 'Videos']:
             for item in fave['items']:
@@ -56,7 +65,11 @@ def delete_fave():
                     vk_session.method('likes.delete', values=values)
                 except vk_api.ApiError:
                     print('Ошибка')
-                time.sleep(1)
+
+                timeout = TIMEOUT_FOR_UNLIKE
+                if not aggressive:
+                    timeout += random.random() * TIMEOUT_DELTA
+                time.sleep(timeout)
         else:
-            sys.stderr.write('Ещё не готово. Удалите %s вручную, пожалуйста'
-                             '\n' % fave_type)
+            print('Ещё не готово. Удалите %s вручную, пожалуйста'
+                  '\n' % fave_type)

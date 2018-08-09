@@ -11,6 +11,7 @@ from typing import List
 import vk_api
 
 from core.download import get_photo_attach, get_video_attach, IMAGE_PATTERN
+from core.pyinstaller_compat import resource_path
 
 try:
     import simplejson as json
@@ -278,7 +279,7 @@ class Main(object):
         owner_dir = os.path.join(listdir[idx - 1], 'conversations')
         target_dir = os.path.join('./html/', owner_dir)
         os.makedirs(target_dir, exist_ok=True)
-        copyfile(CSS_FILE_PATH, target_dir + '/styles.css')
+        copyfile(resource_path(CSS_FILE_PATH), target_dir + '/styles.css')
 
         self.path = os.path.join(dumps_dir, owner_dir)
         self.photo_urls = None
@@ -288,6 +289,8 @@ class Main(object):
         conversations_data = []
 
         for dir_name in os.listdir(self.path):
+            if not os.path.isdir(os.path.join(self.path, dir_name)):
+                continue
             print('Render %s' % dir_name)
 
             photo_urls_path = os.path.join(self.path, dir_name, 'photo_urls.json')

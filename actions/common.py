@@ -2,7 +2,8 @@
 # -*- coding: utf-8 -*-
 from core.download import escape
 
-YES_NO_PROMPT = '(введите "y" или "д" для продолжения)> '
+YES_CHAR = '+'
+YES_NO_PROMPT = '(введите "' + YES_CHAR + '" для продолжения)> '
 ARE_YOU_SURE = 'Вы уверены?\n' + YES_NO_PROMPT
 ARE_YOU_DEFINITELY_SURE = 'Вы точно уверены? Действие нельзя отменить\n' \
                           + YES_NO_PROMPT
@@ -12,11 +13,11 @@ FAVE_TYPES = ['Photos', 'Posts', 'Videos', 'Users', 'Links', 'MarketItems']
 
 def are_you_sure() -> bool:
     sure = input(ARE_YOU_SURE)
-    if sure.lower() not in ['y', 'д']:
+    if sure != YES_CHAR:
         return False
 
     sure = input(ARE_YOU_DEFINITELY_SURE)
-    if sure.lower() not in ['y', 'д']:
+    if sure != YES_CHAR:
         return False
     return True
 
