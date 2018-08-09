@@ -46,4 +46,8 @@ def delete_wall():
             'post_id': wall_post['id']
         }
         print('Удаляем %s...' % values)
-        vk_session.method('wall.delete', values=values)
+        try:
+            vk_session.method('wall.delete', values=values)
+        except vk_api.AccessDenied:
+            # Happens when trying to delete one post two times (dunno why)
+            pass
