@@ -41,5 +41,9 @@ def delete_videos():
 
         for video in videos['items']:
             print('Удаляем ' + video['title'])
-            vk_session.method('video.delete', values={'video_id': video['id']})
+            vk_session.method('video.delete', values={
+                'owner_id': video['owner_id'],
+                'video_id': video['id'],
+                'target_id': owner['id']
+            })
             time.sleep(1)

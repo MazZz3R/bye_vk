@@ -13,7 +13,7 @@ def on_error_retry(func):
         while True:
             try:
                 return func(*args, **kwargs)
-            except IOError as ex:
+            except (IOError, vk_api.VkApiError) as ex:
                 sys.stderr.write(str(ex) + '\n')
                 timeout = timeouts.pop(0) if len(timeouts) > 1 else timeouts[0]
                 sys.stderr.write('Sleeping ' + str(timeout) + ' seconds and retrying\n')

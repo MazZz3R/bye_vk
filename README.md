@@ -56,7 +56,7 @@ $ python3 bye_vk.py
 
 ## Установка
 
-[Скачать](https://github.com/neseleznev/bye_vk/releases/download/0.1/bye_vk.exe),
+[Скачать](https://github.com/neseleznev/bye_vk/releases/download/0.1.1/bye_vk.exe),
 положить в отдельную папку (рядом появится много файлов)
 
 ![Запуск](https://user-images.githubusercontent.com/6990568/43870452-3973d202-9b80-11e8-8479-e6dcf9ec2f94.png)

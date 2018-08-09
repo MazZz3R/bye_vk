@@ -2,6 +2,7 @@ dumps
 html
 vk_config.v2.json
 credentials.ini
+.launched
 
 # Created by https://www.gitignore.io/api/linux,python,pycharm,windows
 

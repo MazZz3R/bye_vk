@@ -42,6 +42,7 @@ def delete_albums():
         for album in albums['items']:
             print('Удаляем ' + album['title'])
             vk_session.method('photos.deleteAlbum', values={'album_id': album['id']})
+            time.sleep(1)
 
     print('Теперь удалим сохранённые, фото со стены, фото профиля')
     sure = are_you_sure()
@@ -55,6 +56,6 @@ def delete_albums():
         time.sleep(1)
 
         for photo in album_photos['items']:
-            print('Deleting ' + special_id + '_' + photo['id'])
+            print('Deleting ' + str(special_id) + '_' + str(photo['id']))
             vk_session.method('photos.delete', values={'photo_id': photo['id']})
             time.sleep(1)

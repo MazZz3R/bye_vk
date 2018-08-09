@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
+import time
+
 from actions.common import are_you_sure, YES_NO_PROMPT, print_owner_info
 from core.auth import get_session
 from core.vk_wrapper import VkToolsWithRetry
@@ -69,6 +71,7 @@ def delete_messages():
             print('Удаляем %s...' % values)
 
             vk_session.method('messages.deleteConversation', values=values)
+            time.sleep(1)
 
         again = input(
             'За один раз из каждого диалога можно удалить максимум 10000 '
