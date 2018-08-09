@@ -33,12 +33,14 @@ def dump_videos():
     with open(os.path.join(path, 'videos.json'), 'w', encoding='utf-8') as f:
         json.dump(videos, f, separators=(',', ':'), ensure_ascii=False)
 
+    print(f'Всего {videos["count"]} видеозаписей')
     download_all_photos(path, videos, 'видеозаписей')
 
     video_comments = {}
     for video in videos['items']:
-        print('Retrieving comments for' + video["title"])
+        print('Получаем комменты для', video["title"])
         comments = tools.get_all('video.getComments', 100, values={
+            'owner_id': video['owner_id'],
             'video_id': video['id'],
             'need_likes': 1,
             'extended': 1
