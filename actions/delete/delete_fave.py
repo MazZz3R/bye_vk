@@ -61,10 +61,7 @@ def delete_fave():
                     'item_id': item['id']
                 }
                 print('Удаляем %s...' % values)
-                try:
-                    vk_session.method('likes.delete', values=values)
-                except vk_api.ApiError:
-                    print('Ошибка')
+                vk_session.method('likes.delete', values=values)
 
                 timeout = TIMEOUT_FOR_UNLIKE
                 if not aggressive:
@@ -73,3 +70,6 @@ def delete_fave():
         else:
             print('Ещё не готово. Удалите %s вручную, пожалуйста'
                   '\n' % fave_type)
+    print('API вконтакте не позволяет удалять лайки с объектов удалённых '
+          'групп или пользователей. Пожалуйста, просмотрите вручную закладки '
+          'и снимите лайки.')
