@@ -1,4 +1,5 @@
-from actions import dump_messages, render_to_html
+from .dump.dump_messages import dump_messages
+from .render_to_html import render_to_html
 
 
 def demo():
