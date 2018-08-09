@@ -13,8 +13,8 @@ except ImportError:
 
 import vk_api
 
-TIMEOUT_FOR_UNLIKE = 3
-TIMEOUT_DELTA = 10
+TIMEOUT_FOR_UNLIKE = 1
+TIMEOUT_DELTA = 15
 
 
 def delete_fave():
@@ -49,8 +49,8 @@ def delete_fave():
         mode = input(
             'При удалении лайков часто выскакивает капча. Выберите режим:\n'
             '[+] агрессивный (1 лайк в ' + str(TIMEOUT_FOR_UNLIKE) +
-            ' секунд)?\n'
-            '[-] аккуратный (реже, но капчи всё равно бывают)')
+            ' сек, капча каждые 14-18 объектов)\n'
+            '[-] аккуратный (капча каждые 45-50 объектов)')
         aggressive = mode == '+'
 
         if fave_type in ['Photos', 'Posts', 'Videos']:
