@@ -5,7 +5,7 @@ import os
 
 import vk_api
 
-from actions.common import print_owner_info, ger_user_folder
+from actions.common import print_owner_info, get_user_dump_dir
 from core.auth import get_session
 from core.download import download_all_photos
 from core.vk_wrapper import VkToolsWithRetry
@@ -39,12 +39,11 @@ def dump_wall():
     my_id = owner['id']
     print_owner_info(owner)
 
-    path = './dumps/' + ger_user_folder(owner) + '/wall/'
+    path = os.path.join(get_user_dump_dir(owner), 'wall')
     os.makedirs(path, exist_ok=True)
 
     print('Получаем стену...')
     wall = tools.get_all('wall.get', 100, {'owner_id': my_id})
-    # TODO offsets
     print('Всего записей: ', wall['count'])
 
     # if wall['count']:

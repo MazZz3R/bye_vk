@@ -11,7 +11,7 @@ from typing import List
 import vk_api
 
 from core.download import get_photo_attach, get_video_attach, IMAGE_PATTERN
-from core.pyinstaller_compat import resource_path
+from core.path_helper import resource_path, data_path
 
 try:
     import simplejson as json
@@ -144,7 +144,7 @@ class Message(object):
                     video_template.format(**video)
                 )
             else:
-                attachments.append('<div>{}</div>'.format(attach['type']))
+                attachments.append('<div>{} attachment COMING SOON</div>'.format(attach['type']))
 
         values = {
             'id': self.raw.get('id', ''),
@@ -264,7 +264,7 @@ class Main(object):
         return filename
 
     def run(self):
-        dumps_dir = './dumps/'
+        dumps_dir = data_path('./dumps/')
         listdir = os.listdir(dumps_dir)
 
         if len(listdir) == 1:
@@ -277,7 +277,7 @@ class Main(object):
             idx = int(input('> '))
 
         owner_dir = os.path.join(listdir[idx - 1], 'conversations')
-        target_dir = os.path.join('./html/', owner_dir)
+        target_dir = data_path(os.path.join('./html/', owner_dir))
         os.makedirs(target_dir, exist_ok=True)
         copyfile(resource_path(CSS_FILE_PATH), target_dir + '/styles.css')
 
@@ -306,7 +306,7 @@ class Main(object):
                     if image_url in self.photo_urls:
                         json_str = json_str.replace(
                             image_url,
-                            os.path.join('..', '..', '..', self.photo_urls[image_url]).replace('\\', '/'))
+                            os.path.join('..', '..', '..', '..', self.photo_urls[image_url]).replace('\\', '/'))
 
             dump = json.loads(json_str)
             self.users = dump['users']

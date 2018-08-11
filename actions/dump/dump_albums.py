@@ -6,7 +6,7 @@ import time
 
 import vk_api
 
-from actions.common import print_owner_info, ger_user_folder
+from actions.common import print_owner_info, get_user_dump_dir
 from core.auth import get_session
 from core.download import download_all_photos, escape
 
@@ -26,7 +26,7 @@ def dump_albums():
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
 
-    path = './dumps/' + ger_user_folder(owner) + '/albums/'
+    path = os.path.join(get_user_dump_dir(owner), 'albums')
     os.makedirs(path, exist_ok=True)
 
     albums = tools.get_all('photos.getAlbums', 1000)

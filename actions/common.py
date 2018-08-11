@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import os
+
 from core.download import escape
+from core.path_helper import data_path
 
 YES_CHAR = '+'
 YES_NO_PROMPT = '(введите "' + YES_CHAR + '" для продолжения)> '
@@ -27,5 +30,8 @@ def print_owner_info(owner):
         owner['first_name'], owner['last_name'], owner['id']))
 
 
-def ger_user_folder(owner) -> str:
-    return escape(f'{owner["first_name"]} {owner["last_name"]} [{owner["id"]}]')
+def get_user_dump_dir(owner) -> str:
+    return os.path.join(
+        data_path('dumps'),
+        escape(f'{owner["first_name"]} {owner["last_name"]} [{owner["id"]}]')
+    )

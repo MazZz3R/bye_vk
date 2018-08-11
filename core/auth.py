@@ -1,15 +1,13 @@
-import configparser
+import json
+import os
 import webbrowser
 from getpass import getpass
-from os.path import exists, isfile
 
+from core.path_helper import data_path
 from core.vk_wrapper import VkApiWithRetry
 
-CONFIG_FILE_PATH = 'credentials.ini'
-CONFIG_FILE_DEFAULT_CONTENT = '''[DEFAULT]
-login = 
-password = 
-'''
+VK_CONFIG_FILE = data_path('vk_config.v2.json')
+
 
 def auth_handler():
     """ При двухфакторной аутентификации вызывается эта функция.
@@ -34,30 +32,37 @@ def captcha_handler(captcha):
 
 
 def get_session():
-    config = configparser.ConfigParser()
-    if not exists(CONFIG_FILE_PATH) or not isfile(CONFIG_FILE_PATH):
-        with open(CONFIG_FILE_PATH, 'w') as f:
-            f.write(CONFIG_FILE_DEFAULT_CONTENT)
-    config.read(CONFIG_FILE_PATH)
-    section = config['DEFAULT']
+    saved_login = None
 
-    if 'Login' in section and 'Password' in section and \
-            section['Login'] and section['Password']:
-        login = section['Login']
-        password = section['Password']
+    if os.path.exists(VK_CONFIG_FILE) and os.path.isfile(VK_CONFIG_FILE):
+        try:
+            with open(VK_CONFIG_FILE, 'r', encoding='utf-8') as f:
+                vk_config = json.load(f)
+                login_list = list(vk_config.keys())
+                if len(login_list) > 1:
+                    print('Выберите пользователя:')
+                    for idx, login in enumerate(login_list):
+                        print(f'{idx + 1}. {login}')
+                    login_idx = int(input('Введите номер> '))
+                    saved_login = login_list[login_idx - 1]
+                else:
+                    saved_login = login_list[0]
+        except (TypeError, ValueError, OSError, IOError) as ex:
+            print(ex)
+
+    if saved_login:
+        vk_session = VkApiWithRetry(
+            saved_login,
+            config_filename=VK_CONFIG_FILE,
+            auth_handler=auth_handler,
+            captcha_handler=captcha_handler)
     else:
-        login = input('Login: ')
-        password = getpass()
-        config['DEFAULT'] = {
-            'Login': login,
-            'Password': password
-        }
-        with open(CONFIG_FILE_PATH, 'w') as configfile:
-            config.write(configfile)
-
-    vk_session = VkApiWithRetry(
-        login, password,
-        auth_handler=auth_handler,
-        captcha_handler=captcha_handler
-    )
+        login = input('Логин: ')
+        password = getpass('Пароль: ')
+        vk_session = VkApiWithRetry(
+            login, password,
+            config_filename=VK_CONFIG_FILE,
+            auth_handler=auth_handler,
+            captcha_handler=captcha_handler
+        )
     return vk_session

@@ -5,7 +5,7 @@ import os
 
 import vk_api
 
-from actions.common import print_owner_info, FAVE_TYPES, ger_user_folder
+from actions.common import print_owner_info, FAVE_TYPES, get_user_dump_dir
 from core.auth import get_session
 from core.download import download_all_photos
 from core.vk_wrapper import VkToolsWithRetry
@@ -26,7 +26,7 @@ def dump_fave():
     owner = vk_session.method('users.get')[0]
     print_owner_info(owner)
 
-    path = './dumps/' + ger_user_folder(owner) + '/fave/'
+    path = os.path.join(get_user_dump_dir(owner), 'fave')
     os.makedirs(path, exist_ok=True)
 
     for fave_type in FAVE_TYPES:
