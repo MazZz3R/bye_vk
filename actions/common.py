@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import math
+import json
 import os
 
 from core.download import escape
@@ -50,3 +50,27 @@ def pluralize(number: int, single: str, few: str, many: str) -> str:
     if 2 <= n <= 4:
         return few
     return many
+
+
+def append_to_json(json_path: str, vk_collection, id_key: str):
+    saved_collection = {
+        'count': 0,
+        'items': []
+    }
+    if os.path.exists(json_path) and os.path.isfile(json_path):
+        with open(json_path, 'r', encoding='utf-8') as f:
+            saved_collection = json.load(f)
+
+    id_to_item = dict()
+    for item in saved_collection['items']:
+        id_to_item[item[id_key]] = item
+
+    for item in vk_collection['items']:
+        id_to_item[item[id_key]] = item
+
+    saved_collection['count'] = len(id_to_item)
+    saved_collection['items'] = list(id_to_item.values())
+
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(saved_collection, f, separators=(',', ':'), ensure_ascii=False)
+    return saved_collection

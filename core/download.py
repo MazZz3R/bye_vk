@@ -9,7 +9,7 @@ import re
 import sys
 from os import makedirs
 from os.path import join, exists, isfile
-from typing import Dict, Iterable, Tuple, Sized, List
+from typing import Dict, Tuple, List
 
 try:
     import urllib2
@@ -179,5 +179,16 @@ def download_all_photos(path, wall, photo_source_genitive):
     #             photo_urls.append((url_to_download, url_to_download.split('/')[-1], ''))
     url_to_filename = download_photo(photo_urls, os.path.join(path, 'photos'), photo_source_genitive)
     url_path = os.path.join(path, 'photo_urls.json')
+
+    saved_url_to_filename = dict()
+
+    if os.path.exists(url_path) and os.path.isfile(url_path):
+        with open(url_path, 'r', encoding='utf-8') as f:
+            saved_url_to_filename = json.load(f)
+
+    for url, filename in url_to_filename.items():
+        saved_url_to_filename[url] = filename
+
     with open(url_path, 'w', encoding='utf-8') as f:
-        json.dump(url_to_filename, f, separators=(',', ':'), ensure_ascii=False)
+        json.dump(saved_url_to_filename, f,
+                  separators=(',', ':'), ensure_ascii=False)

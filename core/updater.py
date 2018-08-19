@@ -112,7 +112,7 @@ def check_update():
         response = urlopen(GET_LATEST_VERSION)
         if response.status == 200:
             latest_version = response.read().decode('utf-8').strip('"')
-            if latest_version == VERSION:
+            if latest_version <= VERSION:
                 return
 
             update_msg = UPDATE_INSTRUCTION_EXE if PY_INSTALLER \

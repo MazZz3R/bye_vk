@@ -3,7 +3,7 @@
 import random
 import time
 
-from actions.common import are_you_sure, print_owner_info, FAVE_TYPES, pluralize
+from actions.common import are_you_sure, print_owner_info, FAVE_TYPES
 from core.auth import get_session
 
 try:
@@ -37,9 +37,7 @@ def delete_fave():
         print('Получаем закладки %s...' % fave_type)
         fave = vk_tools.get_all('fave.get' + fave_type, 100)
         cnt = fave['count']
-        fave_types = fave_type + 's'
-        print(f'Всего {cnt:d} '
-              f'{pluralize(cnt, fave_type, fave_types, fave_types)}')
+        print(f'Всего {cnt:d} {fave_type}')
 
         if cnt == 0:
             print("У Вас нет " + fave_type)
@@ -56,8 +54,8 @@ def delete_fave():
             '[-] аккуратный (капча каждые 45-50 объектов)')
         aggressive = mode == '+'
 
-        if fave_type in ['Photos', 'Posts', 'Videos']:
-            for item in fave['items']:
+        for item in fave['items']:
+            if fave_type in ['Photos', 'Posts', 'Videos']:
                 values = {
                     'type': fave_type.lower()[:-1],
                     'owner_id': item['owner_id'],
@@ -66,12 +64,22 @@ def delete_fave():
                 print('Удаляем %s...' % values)
                 vk_session.method('likes.delete', values=values)
 
-                timeout = TIMEOUT_FOR_UNLIKE
-                if not aggressive:
-                    timeout += random.random() * TIMEOUT_DELTA
-                time.sleep(timeout)
-        else:
-            print(f'Ещё не готово. Удалите {fave_type} вручную, пожалуйста\n')
+            elif fave_type == 'Links':
+                print(f'Удаляем {item["title"]}')
+                vk_session.method('fave.removeLink', values={'link_id': item['id']})
+            elif fave_type == 'Users':
+                print(f'Удаляем {item["first_name"]} {item["last_name"]}')
+                vk_session.method('fave.removeUser', values={'user_id': item['id']})
+
+            else:
+                print(f'Ещё не готово. Удалите {fave_type} вручную, пожалуйста')
+                continue
+
+            timeout = TIMEOUT_FOR_UNLIKE
+            if not aggressive:
+                timeout += random.random() * TIMEOUT_DELTA
+            time.sleep(timeout)
+
     print('API вконтакте не позволяет удалять лайки с объектов удалённых '
           'групп или пользователей. Пожалуйста, просмотрите вручную закладки '
           'и снимите лайки.')

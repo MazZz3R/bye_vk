@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import json
 import os
 
 import vk_api
 
-from actions.common import print_owner_info, FAVE_TYPES, get_user_dump_dir
+from actions.common import print_owner_info, FAVE_TYPES, get_user_dump_dir, append_to_json
 from core.auth import get_session
 from core.download import download_all_photos
 from core.vk_wrapper import VkToolsWithRetry
@@ -32,10 +31,12 @@ def dump_fave():
     for fave_type in FAVE_TYPES:
         print('Получаем закладки %s...' % fave_type)
         fave = tools.get_all('fave.get' + fave_type, 100)
-        print('Всего %d %s' % (fave['count'], fave_type))
+        new_count = fave['count']
+        print('Всего %d %s' % (new_count, fave_type))
 
         json_path = os.path.join(path, fave_type.lower() + '.json')
-        with open(json_path, 'w', encoding='utf-8') as f:
-            json.dump(fave, f, separators=(',', ':'), ensure_ascii=False)
-
+        fave = append_to_json(json_path, fave, 'id')
+        all_count = len(fave["items"])
+        if new_count != all_count:
+            print(f'Всего {len(fave["items"])} с уже скачанными закладками')
         download_all_photos(path, fave, 'закладок')
