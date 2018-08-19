@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from actions import \
-    demo, dump_messages, dump_wall, dump_fave, dump_albums, dump_videos, \
+    demo, dump_messages, dump_wall, dump_fave, dump_albums, dump_videos, dump_docs, \
     delete_messages, delete_wall, delete_fave, delete_albums, delete_videos, delete_profile, \
     render_to_html, quit_program
 from core.sleep_inhibitors import get_sleep_inhibitor
@@ -9,7 +9,7 @@ from core.stats import send_stats
 
 action_list = [
     demo,
-    dump_messages, dump_wall, dump_fave, dump_albums, dump_videos,
+    dump_messages, dump_wall, dump_fave, dump_albums, dump_videos, dump_docs,
     delete_messages, delete_wall, delete_fave, delete_albums, delete_videos,
     delete_profile, render_to_html,
     quit_program

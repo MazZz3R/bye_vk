@@ -9,6 +9,7 @@ import re
 import sys
 from os import makedirs
 from os.path import join, exists, isfile
+from typing import Dict, Iterable, Tuple, Sized, List
 
 try:
     import urllib2
@@ -32,23 +33,35 @@ IMAGE_PATTERN = re.compile(
 #   |- proto -|--------- domain -----------|--- path ---|-------------- extension -------------|--- params ?ava=1 ---|
 
 CONSOLE_LENGTH = 79
-PROGRESS_SCALE = 'Скачивание фотографий из '
+PROGRESS_SCALE_PHOTO = 'Скачивание фотографий из '
+PROGRESS_SCALE_DOCS = 'Скачивание документа '
 PROGRESS_STRING = '0 % ............. 25 % ............. 50 % .............. 75 % ........... 100 %'
 
 
-def download(url_list, root_dir, photo_source_genitive):
+def download_photo(url_list, root_dir, photo_source_genitive):
+    sys.stdout.write(PROGRESS_SCALE_PHOTO + photo_source_genitive + '\n')
+    return download_files(root_dir, url_list, True)
+
+
+def download_doc(url: str, root_dir: str, doc_title: str):
+    sys.stdout.write(PROGRESS_SCALE_DOCS + doc_title + '\n')
+    return download_files(root_dir, [(url, doc_title, '')], False)
+
+
+# returns dict {url: saved_path}
+def download_files(root_dir: str, url_list: List[Tuple[str, str, str]], print_progress: bool) -> Dict[str, str]:
     url_to_filename = dict()
     urls_count = len(url_list)
     processed_count = 0
     printed_char_idx = -1
-    sys.stdout.write(PROGRESS_SCALE + photo_source_genitive + '\n')
 
     for url, name, subdir in url_list:
-        target_char_idx = (CONSOLE_LENGTH * processed_count) // urls_count
-        while printed_char_idx < target_char_idx:
-            printed_char_idx += 1
-            sys.stdout.write(PROGRESS_STRING[printed_char_idx])
-            sys.stdout.flush()
+        if print_progress:
+            target_char_idx = (CONSOLE_LENGTH * processed_count) // urls_count
+            while printed_char_idx < target_char_idx:
+                printed_char_idx += 1
+                sys.stdout.write(PROGRESS_STRING[printed_char_idx])
+                sys.stdout.flush()
 
         # if name is None:
         #     name = url.split('/')[-1]
@@ -104,10 +117,11 @@ def download(url_list, root_dir, photo_source_genitive):
             logging.error("Error " + filename)
             logging.error(str(ex))
 
-    while printed_char_idx < CONSOLE_LENGTH - 1:
-        printed_char_idx += 1
-        sys.stdout.write(PROGRESS_STRING[printed_char_idx])
-    sys.stdout.write('\n')
+    if print_progress:
+        while printed_char_idx < CONSOLE_LENGTH - 1:
+            printed_char_idx += 1
+            sys.stdout.write(PROGRESS_STRING[printed_char_idx])
+        sys.stdout.write('\n')
     sys.stdout.flush()
     return url_to_filename
 
@@ -165,7 +179,7 @@ def download_all_photos(path, wall, photo_source_genitive):
     #         if attach["type"] == "photo":
     #             url_to_download = get_photo_attach(attach["photo"])['fullsize']
     #             photo_urls.append((url_to_download, url_to_download.split('/')[-1], ''))
-    url_to_filename = download(photo_urls, os.path.join(path, 'photos'), photo_source_genitive)
+    url_to_filename = download_photo(photo_urls, os.path.join(path, 'photos'), photo_source_genitive)
     url_path = os.path.join(path, 'photo_urls.json')
     with open(url_path, 'w', encoding='utf-8') as f:
         json.dump(url_to_filename, f, separators=(',', ':'), ensure_ascii=False)
