@@ -5,5 +5,6 @@ import platform
 import sys
 
 PACKAGE_NAME = 'Bye, VK'
-PACKAGE_SUFFIX = '-PyInstaller' if hasattr(sys, '_MEIPASS') else platform.system()
-VERSION = '0.1.4a8' + PACKAGE_SUFFIX
+PY_INSTALLER = hasattr(sys, '_MEIPASS')
+CLIENT = 'PyInstaller' if PY_INSTALLER else platform.system()
+VERSION = '0.1.4.8.8'

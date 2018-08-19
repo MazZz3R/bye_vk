@@ -5,7 +5,7 @@ from actions import \
     delete_messages, delete_wall, delete_fave, delete_albums, delete_videos, delete_profile, delete_docs, \
     render_to_html, quit_program
 from core.sleep_inhibitors import get_sleep_inhibitor
-from core.stats import send_stats
+from core.updater import check_update, print_welcome
 
 action_list = [
     demo,
@@ -18,8 +18,8 @@ action_list = [
 
 def main():
     with get_sleep_inhibitor():
-        # Determine whether people use this application
-        send_stats()
+        check_update()
+        print_welcome()
 
         while True:
             print('\nВыберите действие:')
