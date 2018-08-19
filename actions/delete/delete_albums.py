@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import time
 
-from actions.common import are_you_sure, print_owner_info
+from actions.common import are_you_sure, print_owner_info, pluralize
 from core.auth import get_session
 
 try:
@@ -34,7 +34,8 @@ def delete_albums():
     if albums['count'] == 0:
         print("Нет альбомов")
     else:
-        print('Всего ' + str(albums['count']) + ' альбомов')
+        n = albums['count']
+        print(f'Всего {n:d} {pluralize(n, "альбом", "альбома", "альбомов")}')
         sure = are_you_sure()
         if not sure:
             return

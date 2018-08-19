@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 import time
 
-from actions.common import are_you_sure, print_owner_info
+from actions.common import are_you_sure, print_owner_info, pluralize
 from core.auth import get_session
 
 try:
@@ -31,10 +31,11 @@ def delete_videos():
 
     videos = vk_tools.get_all('video.get', 200)
 
-    if videos['count'] == 0:
+    cnt = videos['count']
+    if cnt == 0:
         print("Нет video")
     else:
-        print('Всего ' + str(videos['count']) + ' video')
+        print(f'Всего {cnt:d} видео')
         sure = are_you_sure()
         if not sure:
             return

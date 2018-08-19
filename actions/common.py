@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import math
 import os
 
 from core.download import escape
@@ -35,3 +36,17 @@ def get_user_dump_dir(owner) -> str:
         data_path('dumps'),
         escape(f'{owner["first_name"]} {owner["last_name"]} [{owner["id"]}]')
     )
+
+
+def pluralize(number: int, single: str, few: str, many: str) -> str:
+    n = abs(number)
+    n %= 100
+    if 5 <= n <= 20:
+        return many
+
+    n %= 10
+    if n == 1:
+        return single
+    if 2 <= n <= 4:
+        return few
+    return many

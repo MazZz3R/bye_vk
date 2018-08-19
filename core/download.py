@@ -34,34 +34,33 @@ IMAGE_PATTERN = re.compile(
 
 CONSOLE_LENGTH = 79
 PROGRESS_SCALE_PHOTO = 'Скачивание фотографий из '
-PROGRESS_SCALE_DOCS = 'Скачивание документа '
+PROGRESS_SCALE_DOCS = 'Скачивание документов типа '
 PROGRESS_STRING = '0 % ............. 25 % ............. 50 % .............. 75 % ........... 100 %'
 
 
 def download_photo(url_list, root_dir, photo_source_genitive):
     sys.stdout.write(PROGRESS_SCALE_PHOTO + photo_source_genitive + '\n')
-    return download_files(root_dir, url_list, True)
+    return download_files(root_dir, url_list)
 
 
-def download_doc(url: str, root_dir: str, doc_title: str):
-    sys.stdout.write(PROGRESS_SCALE_DOCS + doc_title + '\n')
-    return download_files(root_dir, [(url, doc_title, '')], False)
+def download_docs(url_list, root_dir: str, doc_type: str):
+    sys.stdout.write(PROGRESS_SCALE_DOCS + doc_type + '\n')
+    return download_files(root_dir, url_list)
 
 
 # returns dict {url: saved_path}
-def download_files(root_dir: str, url_list: List[Tuple[str, str, str]], print_progress: bool) -> Dict[str, str]:
+def download_files(root_dir: str, url_list: List[Tuple[str, str, str]]) -> Dict[str, str]:
     url_to_filename = dict()
     urls_count = len(url_list)
     processed_count = 0
     printed_char_idx = -1
 
     for url, name, subdir in url_list:
-        if print_progress:
-            target_char_idx = (CONSOLE_LENGTH * processed_count) // urls_count
-            while printed_char_idx < target_char_idx:
-                printed_char_idx += 1
-                sys.stdout.write(PROGRESS_STRING[printed_char_idx])
-                sys.stdout.flush()
+        target_char_idx = (CONSOLE_LENGTH * processed_count) // urls_count
+        while printed_char_idx < target_char_idx:
+            printed_char_idx += 1
+            sys.stdout.write(PROGRESS_STRING[printed_char_idx])
+            sys.stdout.flush()
 
         # if name is None:
         #     name = url.split('/')[-1]
@@ -117,11 +116,10 @@ def download_files(root_dir: str, url_list: List[Tuple[str, str, str]], print_pr
             logging.error("Error " + filename)
             logging.error(str(ex))
 
-    if print_progress:
-        while printed_char_idx < CONSOLE_LENGTH - 1:
-            printed_char_idx += 1
-            sys.stdout.write(PROGRESS_STRING[printed_char_idx])
-        sys.stdout.write('\n')
+    while printed_char_idx < CONSOLE_LENGTH - 1:
+        printed_char_idx += 1
+        sys.stdout.write(PROGRESS_STRING[printed_char_idx])
+    sys.stdout.write('\n')
     sys.stdout.flush()
     return url_to_filename
 

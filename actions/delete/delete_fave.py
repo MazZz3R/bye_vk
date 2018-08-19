@@ -3,7 +3,7 @@
 import random
 import time
 
-from actions.common import are_you_sure, print_owner_info, FAVE_TYPES
+from actions.common import are_you_sure, print_owner_info, FAVE_TYPES, pluralize
 from core.auth import get_session
 
 try:
@@ -36,9 +36,12 @@ def delete_fave():
     for fave_type in FAVE_TYPES:
         print('Получаем закладки %s...' % fave_type)
         fave = vk_tools.get_all('fave.get' + fave_type, 100)
-        print('Всего %d %s' % (fave['count'], fave_type))
+        cnt = fave['count']
+        fave_types = fave_type + 's'
+        print(f'Всего {cnt:d} '
+              f'{pluralize(cnt, fave_type, fave_types, fave_types)}')
 
-        if fave['count'] == 0:
+        if cnt == 0:
             print("У Вас нет " + fave_type)
             continue
 
@@ -68,8 +71,7 @@ def delete_fave():
                     timeout += random.random() * TIMEOUT_DELTA
                 time.sleep(timeout)
         else:
-            print('Ещё не готово. Удалите %s вручную, пожалуйста'
-                  '\n' % fave_type)
+            print(f'Ещё не готово. Удалите {fave_type} вручную, пожалуйста\n')
     print('API вконтакте не позволяет удалять лайки с объектов удалённых '
           'групп или пользователей. Пожалуйста, просмотрите вручную закладки '
           'и снимите лайки.')

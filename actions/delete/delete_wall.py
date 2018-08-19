@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-from actions.common import are_you_sure, print_owner_info
+from actions.common import are_you_sure, print_owner_info, pluralize
 from core.auth import get_session
 from core.vk_wrapper import VkToolsWithRetry
 
@@ -30,9 +30,10 @@ def delete_wall():
 
     print('Получаем стену...')
     wall = vk_tools.get_all('wall.get', 100, {'owner_id': owner['id']})
-    print('Всего записей: ', wall['count'])
+    cnt = wall['count']
+    print(f'Всего {cnt:d} {pluralize(cnt, "запись", "записи", "записей")}')
 
-    if wall['count'] == 0:
+    if cnt == 0:
         print("На стене нет записей!")
         return
 
