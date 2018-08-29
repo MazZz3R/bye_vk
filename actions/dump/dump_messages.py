@@ -17,7 +17,7 @@ import vk_api
 
 
 def dump_messages(only_first=False):
-    """Выгрузить сообщения (до нескольких часов)"""
+    """Выгрузить сообщения"""
 
     vk_session = get_session()
 
@@ -41,6 +41,12 @@ def dump_messages(only_first=False):
         max_count=200,
         values={'preview_length': '0'}
     )
+
+    download_photo_input = input(
+        'Говорят (см. README), что ссылки на фото в вк живут вечно, но некоторые ресурсы могут удалить фото\n'
+        '[+] Выгрузить все картинки (до нескольких часов)\n'
+        '[-] оставить в виде ссылок\n> ')
+    download_photo = download_photo_input == '+'
 
     with open(os.path.join(path, 'conversations.json'), 'w', encoding='utf-8') as f:
         json.dump(conversations, f, separators=(',', ':'), ensure_ascii=False)
@@ -86,7 +92,8 @@ def dump_messages(only_first=False):
         with open(os.path.join(dialog_path, 'im.json'), 'w', encoding='utf-8') as f:
             json.dump(messages, f, separators=(',', ':'), ensure_ascii=False)
 
-        download_all_photos(dialog_path, messages, 'диалога')
+        if download_photo:
+            download_all_photos(dialog_path, messages, 'диалога')
 
 
 def get_user_avatars(messages, user_id, vk_session):

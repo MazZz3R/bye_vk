@@ -282,7 +282,7 @@ class Main(object):
         copyfile(resource_path(CSS_FILE_PATH), target_dir + '/styles.css')
 
         self.path = os.path.join(dumps_dir, owner_dir)
-        self.photo_urls = None
+        self.photo_urls = []
 
         print('Selected {}'.format(self.path))
 
