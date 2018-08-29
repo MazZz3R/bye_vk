@@ -59,7 +59,7 @@ $ python3 bye_vk.py
 
 ## Установка Windows
 
-[Скачать и запустить](https://github.com/neseleznev/bye_vk/releases/download/0.1.4.8.8/bye_vk.0.1.4.8.8.exe)
+[Скачать и запустить](https://github.com/neseleznev/bye_vk/releases/download/0.2/bye_vk.0.2.exe)
 (рядом появится папка bye_vk, в которую будут сохранены данные)
 
 ![Запуск](https://user-images.githubusercontent.com/6990568/43870452-3973d202-9b80-11e8-8479-e6dcf9ec2f94.png)
@@ -82,6 +82,15 @@ $ python3 bye_vk.py
 ## Удаление лайков
 
 Через какое-то количество записей (600-1000) API перестаёт выдавать записи, чтобы их дальше удалять. Это можно сделать через страницу https://vk.com/fave . TODO добавить js-скрипт для продолжения удаления лайков через эту страницу.
+
+## Официальная выгрузка
+
+Coming soon!
+![Russian GDPR](https://user-images.githubusercontent.com/6990568/44782463-00b06280-ab90-11e8-85d5-9ba9310d83bf.jpg)
+
+VK планирует ввести возможность запросить список персональных данных, которые хранит соцсеть. 
+
+Российская альтернатива GDPR, который недавно приняли в Евросоюзе.
 
 # TODO List
 - [x] Выгрузка
