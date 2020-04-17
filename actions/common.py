@@ -74,3 +74,14 @@ def append_to_json(json_path: str, vk_collection, id_key: str):
     with open(json_path, 'w', encoding='utf-8') as f:
         json.dump(saved_collection, f, separators=(',', ':'), ensure_ascii=False)
     return saved_collection
+
+
+def print_messages_api_deprecated():
+    print('Ошибка! Невозможно получить доступ к сообщениям\n'
+          'К сожалению, с 15 февраля 2019 API vk.com закрыл доступ на чтение сообщений для приложений, '
+          'не прошедших верификацию.\n'
+          'Официальный анонс: https://vk.com/dev/messages_api\n'
+          'Разъяснение, что приложение не должно содержать автоматизацию пользовательских действий '
+          '(увы, наш случай) https://vk.com/wall-1_390510\n'
+          'Присоединиться к негодующим можно здесь https://vk.com/wall-1_389441\n')
+    input('Нажмите Enter, чтобы выразить свою досаду и продолжить\n')

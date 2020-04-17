@@ -53,7 +53,7 @@
 ```
 $ git clone https://github.com/neseleznev/bye_vk
 $ cd bye_vk
-$ pip3 install -r requirements.txt
+$ pip3 install -U -r requirements.txt
 $ python3 bye_vk.py
 ```
 
