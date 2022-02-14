@@ -30,7 +30,7 @@ def on_error_retry(func):
 
 class VkToolsWithRetry(vk_api.VkTools):
     @on_error_retry
-    def get_all(self, *args, **kwargs):
+    def get_all(self, *args: object, **kwargs: object) -> object:
         return super().get_all(*args, **kwargs)
 
 

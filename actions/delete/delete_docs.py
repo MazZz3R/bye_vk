@@ -20,17 +20,17 @@ def delete_docs():
     vk_session = get_session()
 
     try:
-        vk_session.auth()
+        vk_session.method("users.get")
     except vk_api.AuthError as error_msg:
         print(error_msg)
         return
 
     vk_tools = vk_api.VkTools(vk_session)
 
-    owner = vk_session.method('users.get')[0]
+    owner = vk_session.method("users.get")[0]
     print_owner_info(owner)
 
-    docs = vk_tools.get_all('docs.get', 2000)
+    docs = vk_tools.get_all("docs.get", 2000)
     cnt = docs["count"]
     if cnt == 0:
         print("У Вас нет документов")
@@ -43,9 +43,9 @@ def delete_docs():
     if not sure:
         return
 
-    for doc in docs['items']:
-        print('Удаляем %s...' % doc['title'])
-        vk_session.method('docs.delete', values={
-            'owner_id': owner['id'],
-            'doc_id': doc['id']
+    for doc in docs["items"]:
+        print(f"Удаляем {doc['title']}...")
+        vk_session.method("docs.delete", values={
+            "owner_id": owner["id"],
+            "doc_id": doc["id"]
         })

@@ -7,6 +7,6 @@ from .delete_wall import delete_wall
 from .delete_docs import delete_docs
 
 __all__ = [
-    'delete_messages', 'delete_wall', 'delete_fave', 'delete_albums', 'delete_videos', 'delete_profile',
-    'delete_docs'
+    "delete_messages", "delete_wall", "delete_fave", "delete_albums", "delete_videos", "delete_profile",
+    "delete_docs"
 ]
