@@ -15,15 +15,15 @@ action_list = [
 
 def main():
     with get_sleep_inhibitor():
-        #check_update()
+        #  check_update()
         print_welcome()
 
         while True:
             print("\nВыберите действие:")
-            for idx, action in enumerate(action_list):
-                print("{0:2}. {1}".format(idx + 1, action.__doc__))
-            action_idx = int(input("> "))
-            action_list[action_idx - 1]()
+            for action_id, action in enumerate(action_list):
+                print(f"{action_id+1:2}. {action.__doc__}")
+            need_action_id = int(input("> ")) - 1
+            action_list[need_action_id]()
 
 
 if __name__ == "__main__":

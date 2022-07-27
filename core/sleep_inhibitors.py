@@ -1,8 +1,20 @@
 import logging
 import os
+from abc import ABCMeta, abstractmethod
 
 
-class DoNothing:
+class Inhibitor(metaclass=ABCMeta):
+
+    @abstractmethod
+    def __enter__(self):
+        """Preventing OS from going to sleep"""
+
+    @abstractmethod
+    def __exit__(self, type_, value, traceback):
+        """Allowing OS to go to sleep"""
+
+
+class OtherOS(Inhibitor):
     def __enter__(self):
         pass
 
@@ -10,16 +22,13 @@ class DoNothing:
         pass
 
 
-class WindowsInhibitor:
+class WindowsInhibitor(Inhibitor):
     """Prevent OS sleep/hibernate in windows; code from:
     https://github.com/h3llrais3r/Deluge-PreventSuspendPlus/blob/master/preventsuspendplus/core.py
     API documentation:
     https://msdn.microsoft.com/en-us/library/windows/desktop/aa373208(v=vs.85).aspx"""
     ES_CONTINUOUS = 0x80000000
     ES_SYSTEM_REQUIRED = 0x00000001
-
-    def __init__(self):
-        pass
 
     def __enter__(self):
         import ctypes
@@ -40,5 +49,5 @@ def get_sleep_inhibitor():
         inhibitor_cls = WindowsInhibitor
     # TODO solution for Linux (Gnome, KDE also suspend on some distributions)
     else:
-        inhibitor_cls = DoNothing
+        inhibitor_cls = OtherOS
     return inhibitor_cls()

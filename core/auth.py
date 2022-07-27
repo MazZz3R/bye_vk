@@ -22,28 +22,23 @@ def captcha_handler(captcha):
 
 
 def get_session():
-    saved_token = None
+    token = None
 
     if os.path.exists(VK_CONFIG_FILE) and os.path.isfile(VK_CONFIG_FILE):
         try:
             with open(VK_CONFIG_FILE, 'r', encoding='utf-8') as f:
                 vk_config = json.load(f)
-                saved_token = vk_config["token"]
+                token = vk_config["token"]
         except (TypeError, ValueError, OSError, IOError) as ex:
             print(ex)
 
-    if saved_token:
-        vk_session = VkApiWithRetry(
-            token=saved_token,
-            captcha_handler=captcha_handler
-        )
-    else:
+    if not token:
         token = input("Токен: ")
         with open(VK_CONFIG_FILE, 'w+', encoding='utf-8') as f:
             json.dump({"token": token}, f)
 
-        vk_session = VkApiWithRetry(
-            token=token,
-            captcha_handler=captcha_handler
-        )
+    vk_session = VkApiWithRetry(
+        token=token,
+        captcha_handler=captcha_handler
+    )
     return vk_session

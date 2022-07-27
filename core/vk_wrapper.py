@@ -14,16 +14,16 @@ def on_error_retry(func):
             try:
                 return func(*args, **kwargs)
             except vk_api.AccessDenied:
-                print('Ошибка доступа')
+                print("Ошибка доступа")
                 return
             except (IOError, vk_api.VkApiError) as ex:
                 sys.stderr.write(str(ex) + '\n')
-                if hasattr(ex, 'error') and 'error_msg' in ex.error \
-                        and 'Access denied' in ex.error['error_msg']:
-                    print('Ошибка доступа')
+                if hasattr(ex, "error") and "error_msg" in ex.error \
+                        and "Access denied" in ex.error["error_msg"]:
+                    print("Ошибка доступа")
                     return
                 timeout = timeouts.pop(0) if len(timeouts) > 1 else timeouts[0]
-                sys.stderr.write('Sleeping ' + str(timeout) + ' seconds and retrying\n')
+                sys.stderr.write(f"Sleeping {str(timeout)} seconds and retrying\n")
                 time.sleep(timeout)
     return func_wrapper
 

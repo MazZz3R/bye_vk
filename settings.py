@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # Nikita Seleznev, 2018
-# mazzz3r 2022
+# mazzz3r, 2022
 import platform
 import sys
 
