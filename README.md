@@ -70,10 +70,7 @@ VK ввели [возможность](https://vk.com/data_protection?section=ru
 
 В связи с этим, выпилил скрипты сохранения данных
 
-# TODO List
-- [ ] Добавить js скрипты для удаления остального (что не может апи)
-- [ ] exe для Windows
-- [ ] Возможность выбрать, какие диалоги не надо удалять
-- [ ] Проверка и установка обновлений
+# [TODO List](https://github.com/users/MazZz3R/projects/1/views/1)
+
 
 ![P.S.](images/goodbye.png)
