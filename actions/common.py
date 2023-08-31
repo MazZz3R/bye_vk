@@ -20,9 +20,7 @@ def are_you_sure() -> bool:
         return False
 
     sure = input(ARE_YOU_DEFINITELY_SURE)
-    if sure != YES_CHAR:
-        return False
-    return True
+    return sure == YES_CHAR
 
 
 def print_owner_info(owner):
@@ -38,6 +36,4 @@ def pluralize(number: int, single: str, few: str, many: str) -> str:
     n %= 10
     if n == 1:
         return single
-    if 2 <= n <= 4:
-        return few
-    return many
+    return few if 2 <= n <= 4 else many

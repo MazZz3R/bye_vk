@@ -82,16 +82,16 @@ def print_welcome():
 
 
 def send_stats():
-    base_url = '%s/users/%s/' % (FIREBASE_URL, get_mac())
+    base_url = f'{FIREBASE_URL}/users/{get_mac()}/'
     now = str(datetime.datetime.utcnow()).split('.')[0]
-    payload = {now: VERSION + '-' + CLIENT}
+    payload = {now: f'{VERSION}-{CLIENT}'}
 
     if not os.path.isfile(LAUNCHED_FILE):
-        url = base_url + 'first_launch.json'
+        url = f'{base_url}first_launch.json'
         os.makedirs(data_path('.'), exist_ok=True)
         open(LAUNCHED_FILE, 'a').close()
     else:
-        url = base_url + 'launches.json'
+        url = f'{base_url}launches.json'
 
     req = Request(url,
                   data=json.dumps(payload).encode('utf8'),
@@ -131,11 +131,11 @@ def check_update():
                     print('Что-то пошло не так при скачивании exe')
                     return
                 exe_url = response_exe.read().decode('utf-8').strip('"')
-                filename = 'bye_vk.' + latest_version + '.exe'
+                filename = f'bye_vk.{latest_version}.exe'
                 with urlopen(exe_url) as exe, open(filename, 'wb') as f:
                     shutil.copyfileobj(exe, f)
                 # subprocess.Popen('cmd /K ' + filename, shell=True)
-                os.system('start cmd /K ' + filename)
+                os.system(f'start cmd /K {filename}')
                 sys.exit(0)
             else:
                 input('Нажми <Enter>, чтобы продолжить\n')

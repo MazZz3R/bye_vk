@@ -59,15 +59,10 @@ def delete_messages():
 
             values = {"count": "10000"}
 
-            if peer_type == "user":
-                values.update({"user_id": peer_id})
-            elif peer_type == "chat":
-                values.update({"peer_id": peer_id})
-            elif peer_type == "group":  # FIXME test me
-                values.update({"peer_id": peer_id})
-            elif peer_type == "email":  # FIXME test me
-                values.update({"peer_id": peer_id})
-
+            if peer_type in ["chat", "group", "email"]:
+                values["peer_id"] = peer_id
+            elif peer_type == "user":
+                values["user_id"] = peer_id
             print(f"Удаляем {values}...")
 
             vk_session.method("messages.deleteConversation", values=values)
