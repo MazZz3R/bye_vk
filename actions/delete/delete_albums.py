@@ -57,6 +57,6 @@ def delete_albums():
         time.sleep(1)
 
         for photo in album_photos["items"]:
-            print("Deleting " + str(special_id) + "_" + str(photo["id"]))
+            print(f"Deleting {str(special_id)}_" + str(photo["id"]))
             vk_session.method("photos.delete", values={"photo_id": photo["id"]})
             time.sleep(1)

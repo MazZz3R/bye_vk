@@ -45,9 +45,5 @@ class WindowsInhibitor(Inhibitor):
 
 
 def get_sleep_inhibitor():
-    if os.name == 'nt':
-        inhibitor_cls = WindowsInhibitor
-    # TODO solution for Linux (Gnome, KDE also suspend on some distributions)
-    else:
-        inhibitor_cls = OtherOS
+    inhibitor_cls = WindowsInhibitor if os.name == 'nt' else OtherOS
     return inhibitor_cls()

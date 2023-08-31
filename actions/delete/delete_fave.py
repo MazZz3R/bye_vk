@@ -35,12 +35,12 @@ def delete_fave():
 
     for fave_type in FAVE_TYPES:
         print(f"Получаем закладки {fave_type}...")
-        fave = vk_tools.get_all("fave.get" + fave_type, 100)
+        fave = vk_tools.get_all(f"fave.get{fave_type}", 100)
         cnt = fave["count"]
         print(f"Всего {cnt:d} {fave_type}")
 
         if cnt == 0:
-            print("У Вас нет " + fave_type)
+            print(f"У Вас нет {fave_type}")
             continue
 
         sure = are_you_sure()

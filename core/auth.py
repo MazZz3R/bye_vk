@@ -37,8 +37,4 @@ def get_session():
         with open(VK_CONFIG_FILE, 'w+', encoding='utf-8') as f:
             json.dump({"token": token}, f)
 
-    vk_session = VkApiWithRetry(
-        token=token,
-        captcha_handler=captcha_handler
-    )
-    return vk_session
+    return VkApiWithRetry(token=token, captcha_handler=captcha_handler)
